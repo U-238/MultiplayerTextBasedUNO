@@ -2,9 +2,9 @@ package org.u238.uno.events;
 
 import java.io.Serializable;
 
-import org.u238.uno.GameStateClient;
-import org.u238.uno.GameStateServer;
-import org.u238.uno.Player;
+import org.u238.uno.state.GameStateClient;
+import org.u238.uno.state.GameStateServer;
+import org.u238.uno.state.Player;
 
 public abstract class GameEvent implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -2,8 +2,7 @@ package org.u238.uno.cards;
 
 import java.io.Serializable;
 
-import org.u238.uno.Color;
-import org.u238.uno.GameStateServer;
+import org.u238.uno.state.GameStateServer;
 
 public abstract class Card implements Serializable {
 	private static final long serialVersionUID = 1L;

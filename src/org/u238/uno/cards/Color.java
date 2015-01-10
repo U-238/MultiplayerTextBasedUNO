@@ -1,4 +1,4 @@
-package org.u238.uno;
+package org.u238.uno.cards;
 
 import java.io.Serializable;
 

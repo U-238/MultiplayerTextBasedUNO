@@ -7,11 +7,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import org.u238.uno.GameStateClient;
 import org.u238.uno.cards.Card;
 import org.u238.uno.events.DrawCard;
 import org.u238.uno.events.GameEvent;
 import org.u238.uno.events.PlaceCard;
+import org.u238.uno.state.GameStateClient;
 
 public class UnoClient {
 	GameStateClient gs;

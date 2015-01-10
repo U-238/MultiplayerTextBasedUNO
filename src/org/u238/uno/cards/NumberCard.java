@@ -1,7 +1,6 @@
 package org.u238.uno.cards;
 
-import org.u238.uno.Color;
-import org.u238.uno.GameStateServer;
+import org.u238.uno.state.GameStateServer;
 
 public class NumberCard extends Card {
 	private static final long serialVersionUID = 1L;

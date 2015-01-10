@@ -7,14 +7,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import org.u238.uno.GameStateServer;
-import org.u238.uno.Player;
 import org.u238.uno.events.DrawCard;
 import org.u238.uno.events.FirstCard;
 import org.u238.uno.events.GameEnd;
 import org.u238.uno.events.GameEvent;
 import org.u238.uno.events.ReplenishDeck;
 import org.u238.uno.events.YourTurn;
+import org.u238.uno.state.GameStateServer;
+import org.u238.uno.state.Player;
 
 public class UnoServer {
 	GameStateServer gs;

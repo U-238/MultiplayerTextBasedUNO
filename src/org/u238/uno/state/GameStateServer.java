@@ -1,4 +1,4 @@
-package org.u238.uno;
+package org.u238.uno.state;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import org.u238.uno.cards.Card;
+import org.u238.uno.cards.Color;
 import org.u238.uno.cards.NumberCard;
 import org.u238.uno.events.GameEvent;
 

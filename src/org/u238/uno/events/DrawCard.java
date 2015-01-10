@@ -3,10 +3,10 @@ package org.u238.uno.events;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import org.u238.uno.GameStateClient;
-import org.u238.uno.GameStateServer;
-import org.u238.uno.Player;
 import org.u238.uno.cards.Card;
+import org.u238.uno.state.GameStateClient;
+import org.u238.uno.state.GameStateServer;
+import org.u238.uno.state.Player;
 
 public class DrawCard extends GameEvent {
 	private static final long serialVersionUID = 1L;

@@ -2,8 +2,8 @@ package org.u238.uno.events;
 
 import java.util.Random;
 
-import org.u238.uno.GameStateClient;
-import org.u238.uno.GameStateServer;
+import org.u238.uno.state.GameStateClient;
+import org.u238.uno.state.GameStateServer;
 
 public class ReplenishDeck extends GameEvent {
 	private static final long serialVersionUID = 1L;

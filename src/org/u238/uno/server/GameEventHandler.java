@@ -2,9 +2,9 @@ package org.u238.uno.server;
 
 import java.io.IOException;
 
-import org.u238.uno.GameStateServer;
-import org.u238.uno.Player;
 import org.u238.uno.events.GameEvent;
+import org.u238.uno.state.GameStateServer;
+import org.u238.uno.state.Player;
 
 public class GameEventHandler {
 	public GameStateServer gs;

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.u238.uno.state.GameStateServer;
 
-public abstract class Card implements Serializable {
+public abstract class Card implements Serializable, Comparable<Card> {
 	private static final long serialVersionUID = 1L;
 	private static int nextUniqueId = 0;
 	
@@ -38,6 +38,27 @@ public abstract class Card implements Serializable {
 	public boolean equals(Object o) {
 		Card c = (Card) o;
 		return (c.uniqueId == this.uniqueId);
+	}
+	
+	@Override
+	public int compareTo(Card o) {
+		if (this.equals(o))
+			return 0;
+		if (this.color.color == o.color.color) {
+			if (this.type == o.type) {
+				if (this.type == NUMBER) {
+					NumberCard c1 = (NumberCard) this;
+					NumberCard c2 = (NumberCard) o;
+					return c1.number - c2.number;
+				} else {
+					return 0;
+				}
+			} else {
+				return this.type - o.type;
+			}
+		} else {
+			return this.color.color - o.color.color;
+		}
 	}
 	
 	// Can this card be placed on card c?

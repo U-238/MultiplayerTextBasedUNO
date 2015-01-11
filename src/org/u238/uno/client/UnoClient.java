@@ -19,6 +19,7 @@ import org.u238.uno.state.GameStateClient;
 public class UnoClient {
 	Color[] allColors = new Color[]{Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
 	GameStateClient gs;
+	boolean sortingEnabled = false;
 
 	public static void main(String[] args) {
 		UnoClient c = new UnoClient();
@@ -63,13 +64,23 @@ public class UnoClient {
 						System.out.println("\nIt's your turn!");
 						System.out.println("Top card is: " + gs.topCard.makeString());
 						System.out.println("Your hand:");
-						System.out.print(gs.hand.printHand());
+						System.out.print(gs.hand.printHand(sortingEnabled));
 						
 						do {
-							System.out.print("Select card to play, or 'p' to pick up a card: ");
+							System.out.print("Enter number to play card, 'p' to pick up, 's' to toggle sorting: ");
 							String in = serverConsoleInput.readLine();
 							System.out.println(" ");
-							if (in.toLowerCase().equals("p")) {
+							if (in.toLowerCase().equals("s")) {
+								if (sortingEnabled) {
+									sortingEnabled = false;
+									System.out.println("Sorting disabled.");
+								} else {
+									sortingEnabled = true;
+									System.out.println("Sorting enabled.");
+									System.out.print(gs.hand.printHand(sortingEnabled));
+								}
+								validInput = false; // This makes the prompt display again
+							} else if (in.toLowerCase().equals("p")) {
 								outToServer.writeObject(new DrawCard());
 								validInput = true;
 							} else {

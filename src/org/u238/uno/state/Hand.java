@@ -1,6 +1,7 @@
 package org.u238.uno.state;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import org.u238.uno.cards.Card;
@@ -23,6 +24,13 @@ public class Hand implements Serializable {
 	}
 	
 	public String printHand() {
+		return printHand(false);
+	}
+	
+	public String printHand(boolean sort) {
+		if (sort) {
+			Collections.sort(this.cards);
+		}
 		String out = "";
 		int i=1;
 		for (Card c : this.cards) {

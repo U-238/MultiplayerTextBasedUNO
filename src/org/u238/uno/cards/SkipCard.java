@@ -1,20 +1,18 @@
 package org.u238.uno.cards;
 
-import org.u238.uno.events.DrawCard;
 import org.u238.uno.state.GameStateServer;
 
-public class DrawTwoCard extends SpecialCard {
+public class SkipCard extends SpecialCard {
 	private static final long serialVersionUID = 1L;
 	
-	public DrawTwoCard(Color color) {
-		super(DRAWTWO);
+	public SkipCard(Color color) {
+		super(SKIP);
 		this.color = color;
 	}
 	
 	@Override
 	public void doCardAction(GameStateServer gs) {
-		// Next player will draw two cards and miss their turn
-		gs.eventBuffer.add(new DrawCard(gs.nextPlayer(), 2));
+		// Next player will miss their turn
 		gs.skipNextPlayer = true;
 	}
 
@@ -25,6 +23,6 @@ public class DrawTwoCard extends SpecialCard {
 
 	@Override
 	public String makeString() {
-		return this.color.name + " Draw Two";
+		return this.color.name + " Skip";
 	}
 }

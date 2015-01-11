@@ -58,10 +58,12 @@ public class DrawCard extends GameEvent {
 
 	@Override
 	public void doEventServer(GameStateServer gs) {
+		Card card;
 		cardsDrawn = new LinkedList<Card>();
 		for (int i=0; i<numCardsDrawn; i++) {
 			try {
-				cardsDrawn.add(gs.deck.pop());
+				card = gs.deck.pop();
+				cardsDrawn.add(card);
 			} catch (NoSuchElementException e) {
 				numCardsDrawn = cardsDrawn.size();
 				insufficientCards = true;

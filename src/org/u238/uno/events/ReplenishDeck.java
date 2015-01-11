@@ -2,6 +2,8 @@ package org.u238.uno.events;
 
 import java.util.Random;
 
+import org.u238.uno.cards.Card;
+import org.u238.uno.cards.WildCard;
 import org.u238.uno.state.GameStateClient;
 import org.u238.uno.state.GameStateServer;
 
@@ -36,9 +38,18 @@ public class ReplenishDeck extends GameEvent {
 		// in a random order
 		Random rand = new Random();
 		int randNum;
+		Card c;
 		while (gs.pile.size() > 0) {
 			randNum = rand.nextInt(gs.pile.size());
-			gs.deck.add(gs.pile.get(randNum));
+			c = gs.pile.get(randNum);
+			// Reset the "color" of Wild / Wild Draw Four cards
+			if (c.type == Card.WILD) {
+				c = new WildCard();
+			}
+			if (c.type == Card.WILDDRAWFOUR) {
+				c = new WildCard();
+			}
+			gs.deck.add(c);
 			gs.pile.remove(randNum);
 		}
 		

@@ -11,11 +11,11 @@ public class Color implements Serializable {
 	public static final int INT_YELLOW = 3;
 	public static final int INT_GREEN = 4;
 	
-	public static final Color NONE = new Color(INT_NONE, "None");
-	public static final Color RED = new Color(INT_RED, "Red");
-	public static final Color BLUE = new Color(INT_BLUE, "Blue");
-	public static final Color YELLOW = new Color(INT_YELLOW, "Yellow");
-	public static final Color GREEN = new Color(INT_GREEN, "Green");
+	public static Color NONE = new Color(INT_NONE, "None");
+	public static Color RED = new Color(INT_RED, "Red");
+	public static Color BLUE = new Color(INT_BLUE, "Blue");
+	public static Color YELLOW = new Color(INT_YELLOW, "Yellow");
+	public static Color GREEN = new Color(INT_GREEN, "Green");
 	
 	public int color;
 	public String name;

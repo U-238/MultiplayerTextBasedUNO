@@ -28,9 +28,9 @@ public class NumberCard extends Card {
 	
 	@Override
 	public boolean canPlaceOn(Card c) {
-		if (this.color.color == c.color.color)
+		if (this.color.equals(c.color))
 			return true;
-		if (this.type != NUMBER)
+		if (c.type != NUMBER)
 			return false;
 		else {
 			NumberCard nc = (NumberCard) c;

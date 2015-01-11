@@ -1,17 +1,21 @@
 package org.u238.uno.cards;
 
+import org.u238.uno.events.DrawCard;
 import org.u238.uno.state.GameStateServer;
 
-public class WildCard extends SpecialCard {
+public class WildDrawFourCard extends SpecialCard {
 	private static final long serialVersionUID = 1L;
 	
-	public WildCard() {
-		super(WILD);
+	public WildDrawFourCard() {
+		super(WILDDRAWFOUR);
 		this.color = Color.NONE;
 	}
 
 	@Override
 	public void doCardAction(GameStateServer gs) {
+		// Next player will draw four cards and miss their turn
+		gs.eventBuffer.add(new DrawCard(gs.nextPlayer(), 4));
+		gs.skipNextPlayer = true;
 	}
 
 	@Override
@@ -23,9 +27,9 @@ public class WildCard extends SpecialCard {
 	public String makeString() {
 		String output;
 		if (color.equals(Color.NONE))
-			output = "Wild";
+			output = "Wild Draw Four";
 		else
-			output = "Wild, chosen color: " + color.name;
+			output = "Wild Draw Four, chosen color: " + color.name;
 		return output;
 	}
 	

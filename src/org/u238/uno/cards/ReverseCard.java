@@ -1,21 +1,19 @@
 package org.u238.uno.cards;
 
-import org.u238.uno.events.DrawCard;
 import org.u238.uno.state.GameStateServer;
 
-public class DrawTwoCard extends SpecialCard {
+public class ReverseCard extends SpecialCard {
 	private static final long serialVersionUID = 1L;
 	
-	public DrawTwoCard(Color color) {
-		super(DRAWTWO);
+	public ReverseCard(Color color) {
+		super(REVERSE);
 		this.color = color;
 	}
 	
 	@Override
 	public void doCardAction(GameStateServer gs) {
-		// Next player will draw two cards and miss their turn
-		gs.eventBuffer.add(new DrawCard(gs.nextPlayer(), 2));
-		gs.skipNextPlayer = true;
+		// Reverse game direction
+		gs.changePlayDirection();
 	}
 
 	@Override
@@ -25,6 +23,6 @@ public class DrawTwoCard extends SpecialCard {
 
 	@Override
 	public String makeString() {
-		return this.color.name + " Draw Two";
+		return this.color.name + " Reverse";
 	}
 }

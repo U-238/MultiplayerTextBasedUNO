@@ -81,11 +81,7 @@ public class UnoServer {
 			// Set up game
 			gs.prepareForGameStart();
 			events.handleEvent(new FirstCard(gs.topCard));
-			//System.out.println(gs.player.length);
-			//System.out.println(gs.player[0].name);
-			//System.out.println(gs.player[1].name);
 			for (Player p : gs.player) {
-				//System.out.println(p.name);
 				events.handleEvent(new DrawCard(p, 7));
 			}
 			
@@ -96,7 +92,9 @@ public class UnoServer {
 				gs.currentPlayerOutputStream().writeObject(new YourTurn());
 				e = (GameEvent) gs.currentPlayerInputStream().readObject();
 				events.handleEventFromPlayer(e, gs.currentPlayer);
-				for (GameEvent e2 : gs.eventBuffer) {
+				GameEvent e2;
+				while (!gs.eventBuffer.isEmpty()) {
+					e2 = gs.eventBuffer.poll();
 					events.handleEvent(e2);
 				}
 				if (gs.activePlayers() == 1) {
@@ -128,5 +126,4 @@ public class UnoServer {
 			e1.printStackTrace();
 		}
 	}
-
 }

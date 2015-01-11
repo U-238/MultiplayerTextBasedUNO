@@ -43,6 +43,7 @@ public class PlaceCard extends GameEvent {
 		}
 		gs.pile.push(cardPlayed);
 		gs.topCard = cardPlayed;
+		cardPlayed.doCardAction(gs);
 		
 		if (player.hand.cards.size() == 0) {
 			gs.eventBuffer.add(new PlayerFinished(player));

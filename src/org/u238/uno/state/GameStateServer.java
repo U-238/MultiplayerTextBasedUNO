@@ -10,7 +10,12 @@ import java.util.Random;
 
 import org.u238.uno.cards.Card;
 import org.u238.uno.cards.Color;
+import org.u238.uno.cards.DrawTwoCard;
 import org.u238.uno.cards.NumberCard;
+import org.u238.uno.cards.ReverseCard;
+import org.u238.uno.cards.SkipCard;
+import org.u238.uno.cards.WildCard;
+import org.u238.uno.cards.WildDrawFourCard;
 import org.u238.uno.events.GameEvent;
 
 public class GameStateServer {
@@ -28,6 +33,7 @@ public class GameStateServer {
 	public boolean playDirection;
 	public Queue<GameEvent> eventBuffer;
 	public int nextFinishPosition;
+	public boolean skipNextPlayer = false;
 	
 	public void setNumPlayers(int numPlayers) {
 		totalPlayers = numPlayers;
@@ -48,10 +54,8 @@ public class GameStateServer {
 			System.exit(-1);
 		}
 		try {
-			//System.out.println("Hello");
 			playerInputs[i] = new ObjectInputStream(newSocket.getInputStream());
 			playerOutputs[i] = new ObjectOutputStream(newSocket.getOutputStream());
-			//System.out.println("Hello 2");
 			String name = (String) playerInputs[i].readObject();
 			player[i] = new Player(name);
 		} catch (IOException e) {
@@ -91,11 +95,21 @@ public class GameStateServer {
 					nextPlayerId = totalPlayers - 1;
 			}
 		} while (player[nextPlayerId].finished);
-		return nextPlayerId;
+		if (skipNextPlayer) {
+			// Go past this player to the next one
+			skipNextPlayer = false;
+			currentPlayerId = nextPlayerId;
+			return nextPlayerId();
+		} else {
+			return nextPlayerId;
+		}
 	}
 	
 	public void changePlayDirection() {
-		playDirection = !playDirection;
+		if (activePlayers() == 2)
+			skipNextPlayer = true;
+		else
+			playDirection = !playDirection;
 	}
 	
 	public Player getPlayerByName(String pName) {
@@ -127,15 +141,34 @@ public class GameStateServer {
 		nextFinishPosition = 1;
 		
 		// Create deck
+		/*
+		 * An UNO deck contains:
+		 *   19 Blue Cards - 0 x1 and 1 to 9 x2
+		 *   19 Green Cards - 0 x1 and 1 to 9 x2
+		 *   19 Red Cards - 0 x1 and 1 to 9 x2
+		 *   19 Yellow Cards - 0 x1 and 1 to 9 x2
+		 *   8 Draw Two cards - 2 each in Blue, Green, Red and Yellow
+		 *   8 Reverse Cards - 2 each in Blue, Green, Red and Yellow
+		 *   8 Skip Cards - 2 each in Blue, Green, Red and Yellow
+		 *   4 Wild Cards
+		 *   4 Wild Draw Four cards
+		 */
 		LinkedList<Card> tempCards = new LinkedList<Card>();
-		
 		for (Color c : allColors) {
-			for (int i=1; i<10; i++) {
-				tempCards.add(new NumberCard(i, c));
-				// TODO: Add other color cards
+			tempCards.add(new NumberCard(0, c));
+			for (int j=0; j<2; j++) {
+				for (int i=1; i<10; i++) {
+					tempCards.add(new NumberCard(i, c));
+				}
+				tempCards.add(new DrawTwoCard(c));
+				tempCards.add(new ReverseCard(c));
+				tempCards.add(new SkipCard(c));
 			}
 		}
-		// TODO: Add wild cards
+		for (int j=0; j<4; j++) {
+			tempCards.add(new WildCard());
+			tempCards.add(new WildDrawFourCard());
+		}
 		
 		// Shuffle deck
 		deck = new LinkedList<Card>();
@@ -149,8 +182,11 @@ public class GameStateServer {
 		System.out.println(deck.size() + " cards in deck");
 		
 		// Create pile and turn over first card
+		// Ensure first card is a number card
 		pile = new LinkedList<Card>();
-		topCard = deck.pop();
-		pile.push(topCard);
+		do {
+			topCard = deck.pop();
+			pile.push(topCard);
+		} while (topCard.type != Card.NUMBER);
 	}
 }

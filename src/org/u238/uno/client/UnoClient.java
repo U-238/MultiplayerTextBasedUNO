@@ -8,12 +8,14 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import org.u238.uno.cards.Card;
+import org.u238.uno.cards.Color;
 import org.u238.uno.events.DrawCard;
 import org.u238.uno.events.GameEvent;
 import org.u238.uno.events.PlaceCard;
 import org.u238.uno.state.GameStateClient;
 
 public class UnoClient {
+	Color[] allColors = new Color[]{Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
 	GameStateClient gs;
 
 	public static void main(String[] args) {
@@ -49,7 +51,7 @@ public class UnoClient {
 				e = (GameEvent) inFromServer.readObject();
 				if (e.makeString().equals("YourTurn")) {
 					// Your turn
-					boolean validInput = true;
+					boolean validInput = false;
 					System.out.println("\nIt's your turn!");
 					System.out.println("Top card is: " + gs.topCard.makeString());
 					System.out.println("Your hand:");
@@ -62,6 +64,7 @@ public class UnoClient {
 						System.out.println(" ");
 						if (in.toLowerCase().equals("p")) {
 							outToServer.writeObject(new DrawCard());
+							validInput = true;
 						} else {
 							try {
 								int number = Integer.valueOf(in).intValue();
@@ -69,9 +72,38 @@ public class UnoClient {
 								
 								if (!c.canPlaceOn(gs.topCard)) {
 									System.out.println("You can't place that card!");
-									validInput = false;
+									validInput = false;									
 								} else {
+									if (c.canSetColor()) {
+										boolean validColorInput = false;
+										do {
+											try {
+												System.out.println("Select new color:");
+												int color = 1;
+												for (Color col : allColors) {
+													System.out.println(color + ": " + col.name);
+													color++;
+												}
+												System.out.print("Your selection: ");
+												String colorIn = serverConsoleInput.readLine();
+												int colorInNum = Integer.valueOf(colorIn).intValue();
+												System.out.println(" ");
+												if (colorInNum > 0 && colorInNum < 5) {
+													// We indicate the user's chosen color
+													// to the server by setting the "color"
+													// of the Wild card.
+													c.color = allColors[colorInNum - 1];
+													validColorInput = true;
+												} else {
+													validColorInput = false;
+												}
+											} catch (NumberFormatException e1) {
+												validColorInput = false;
+											}
+										} while (!validColorInput);
+									}
 									//System.out.println(c.makeString());
+									
 									outToServer.writeObject(new PlaceCard(c));
 									validInput = true;
 								}

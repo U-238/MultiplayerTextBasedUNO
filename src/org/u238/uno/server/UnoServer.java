@@ -53,8 +53,17 @@ public class UnoServer {
 		try {
 			BufferedReader serverConsoleInput = new BufferedReader(new InputStreamReader(System.in));
 			System.out.print("Number of players: ");
-			String numPlayersStr = serverConsoleInput.readLine();
-			numPlayers = Integer.valueOf(numPlayersStr).intValue();
+			try {
+				String numPlayersStr = serverConsoleInput.readLine();
+				numPlayers = Integer.valueOf(numPlayersStr).intValue();
+			} catch (NumberFormatException e) {
+				System.err.println("The number of players must be a number!");
+				System.exit(-1);
+			}
+			if (numPlayers < 2 || numPlayers > 10) {
+				System.err.println("The number of players must be between 2 and 10");
+				System.exit(-1);
+			}
 			System.out.println("Server will wait for " + String.valueOf(numPlayers) + " players");
 		} catch (IOException e) {
 			e.printStackTrace();

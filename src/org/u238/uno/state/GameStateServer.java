@@ -34,6 +34,8 @@ public class GameStateServer {
 	public Queue<GameEvent> eventBuffer;
 	public int nextFinishPosition;
 	public boolean skipNextPlayer;
+	public boolean currentPlayerDrewUsableCard;
+	public Card drawnUsableCard;
 	
 	public void setNumPlayers(int numPlayers) {
 		totalPlayers = numPlayers;
@@ -142,6 +144,8 @@ public class GameStateServer {
 		nextFinishPosition = 1;
 		skipNextPlayer = false;
 		playDirection = false;
+		currentPlayerDrewUsableCard = false;
+		drawnUsableCard = null;
 		
 		// Create deck
 		/*

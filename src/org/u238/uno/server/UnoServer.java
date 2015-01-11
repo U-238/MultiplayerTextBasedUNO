@@ -13,6 +13,7 @@ import org.u238.uno.events.GameEnd;
 import org.u238.uno.events.GameEvent;
 import org.u238.uno.events.ReplenishDeck;
 import org.u238.uno.events.YourTurn;
+import org.u238.uno.events.YourTurnAfterDraw;
 import org.u238.uno.state.GameStateServer;
 import org.u238.uno.state.Player;
 
@@ -99,7 +100,13 @@ public class UnoServer {
 				boolean gameActive = true;
 				GameEvent e;
 				while (gameActive) {
-					gs.currentPlayerOutputStream().writeObject(new YourTurn());
+					if (gs.currentPlayerDrewUsableCard) {
+						gs.currentPlayerOutputStream().writeObject(new YourTurnAfterDraw(gs.drawnUsableCard));
+						gs.currentPlayerDrewUsableCard = false;
+						gs.drawnUsableCard = null;
+					} else {
+						gs.currentPlayerOutputStream().writeObject(new YourTurn());
+					}
 					e = (GameEvent) gs.currentPlayerInputStream().readObject();
 					events.handleEventFromPlayer(e, gs.currentPlayer);
 					GameEvent e2;
@@ -114,7 +121,10 @@ public class UnoServer {
 						if (gs.deck.size() < 5) {
 							events.handleEvent(new ReplenishDeck());
 						}
-						gs.moveToNextPlayer();
+						// If the player picked up a card that they can
+						// put down, DON'T move to the next player yet
+						if (!gs.currentPlayerDrewUsableCard)
+							gs.moveToNextPlayer();
 					}
 				}
 				

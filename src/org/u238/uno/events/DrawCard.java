@@ -72,6 +72,14 @@ public class DrawCard extends GameEvent {
 		for (Card c : cardsDrawn) {
 			player.hand.add(c);
 		}
+		// Handle the case where user picks up a
+		// card and is able to play it immediately
+		if (numCardsDrawn == 1) {
+			if (cardsDrawn.get(0).canPlaceOn(gs.topCard)) {
+				gs.currentPlayerDrewUsableCard = true;
+				gs.drawnUsableCard = cardsDrawn.get(0);
+			}
+		}
 	}
 
 	@Override

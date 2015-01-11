@@ -26,10 +26,15 @@ public class GameEventHandler {
 	}
 	
 	public void logEvent(GameEvent e) {
+		if (e.makeString().equals("NullEvent"))
+			return;
 		System.out.println(e.toString());
 	}
 	
 	public void broadcastEvent(GameEvent e) {
+		if (e.makeString().equals("NullEvent"))
+			return;
+		
 		GameEvent eventYou = e.clone();
 		GameEvent eventOther = e.clone();
 		Player player = e.player;

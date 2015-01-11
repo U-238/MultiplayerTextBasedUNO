@@ -11,7 +11,9 @@ import org.u238.uno.cards.Card;
 import org.u238.uno.cards.Color;
 import org.u238.uno.events.DrawCard;
 import org.u238.uno.events.GameEvent;
+import org.u238.uno.events.NullEvent;
 import org.u238.uno.events.PlaceCard;
+import org.u238.uno.events.YourTurnAfterDraw;
 import org.u238.uno.state.GameStateClient;
 
 public class UnoClient {
@@ -117,6 +119,28 @@ public class UnoClient {
 								}
 							}
 						} while (!validInput);
+					} else if (e.makeString().equals("YourTurnAfterDraw")) {
+						boolean validTurnAfterDraw = false;
+						boolean playCard = false;
+						do {
+							System.out.print("You drew a " + ((YourTurnAfterDraw) e).card.makeString() + ", which can be played. Play this card? [y/n]: ");
+							String ynInput = serverConsoleInput.readLine();
+							System.out.println(" ");
+							if (ynInput.toLowerCase().equals("y")) {
+								playCard = true;
+								validTurnAfterDraw = true;
+							} else if (ynInput.toLowerCase().equals("n")) {
+								playCard = false;
+								validTurnAfterDraw = true;
+							} else {
+								validTurnAfterDraw = false;
+							}
+						} while (!validTurnAfterDraw);
+						if (playCard) {
+							outToServer.writeObject(new PlaceCard(((YourTurnAfterDraw) e).card));
+						} else {
+							outToServer.writeObject(new NullEvent());
+						}
 					} else {
 						e.doEventClient(gs);
 						System.out.println(e.makeString());

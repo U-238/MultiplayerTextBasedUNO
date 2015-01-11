@@ -182,7 +182,7 @@ public class GameStateServer {
 			deck.add(tempCards.get(randNum));
 			tempCards.remove(randNum);
 		}
-		System.out.println(deck.size() + " cards in deck");
+		//System.out.println(deck.size() + " cards in deck");
 		
 		// Create pile and turn over first card
 		// Ensure first card is a number card

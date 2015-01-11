@@ -2,7 +2,7 @@ package org.u238.uno.cards;
 
 import org.u238.uno.state.GameStateServer;
 
-public class ReverseCard extends SpecialCard {
+public class ReverseCard extends ActionCard {
 	private static final long serialVersionUID = 1L;
 	
 	public ReverseCard(Color color) {

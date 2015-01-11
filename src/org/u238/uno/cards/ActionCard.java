@@ -1,9 +1,9 @@
 package org.u238.uno.cards;
 
-public abstract class SpecialCard extends Card {
+public abstract class ActionCard extends Card {
 	private static final long serialVersionUID = 1L;
 	
-	public SpecialCard(int type) {
+	public ActionCard(int type) {
 		super(type);
 	}
 }

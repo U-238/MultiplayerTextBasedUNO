@@ -3,7 +3,7 @@ package org.u238.uno.cards;
 import org.u238.uno.events.DrawCard;
 import org.u238.uno.state.GameStateServer;
 
-public class DrawTwoCard extends SpecialCard {
+public class DrawTwoCard extends ActionCard {
 	private static final long serialVersionUID = 1L;
 	
 	public DrawTwoCard(Color color) {

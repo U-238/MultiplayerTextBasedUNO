@@ -2,7 +2,7 @@ package org.u238.uno.cards;
 
 import org.u238.uno.state.GameStateServer;
 
-public class SkipCard extends SpecialCard {
+public class SkipCard extends ActionCard {
 	private static final long serialVersionUID = 1L;
 	
 	public SkipCard(Color color) {

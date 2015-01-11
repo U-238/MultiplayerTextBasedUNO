@@ -3,7 +3,7 @@ package org.u238.uno.cards;
 import org.u238.uno.events.DrawCard;
 import org.u238.uno.state.GameStateServer;
 
-public class WildDrawFourCard extends SpecialCard {
+public class WildDrawFourCard extends ActionCard {
 	private static final long serialVersionUID = 1L;
 	
 	public WildDrawFourCard() {

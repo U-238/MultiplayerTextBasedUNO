@@ -24,108 +24,127 @@ public class UnoClient {
 	}
 	
 	void run() {
-		try {
-			BufferedReader serverConsoleInput = new BufferedReader(new InputStreamReader(System.in));
-			System.out.print("Your name: ");
-			String name = serverConsoleInput.readLine();
-			//System.out.println("Your name is " + name);
-			
-			Socket s = new Socket("localhost", 22278);
-			
-			gs = new GameStateClient ();
-			ObjectOutputStream outToServer = new ObjectOutputStream(s.getOutputStream());
-			ObjectInputStream inFromServer = new ObjectInputStream(s.getInputStream());
-			
-			/*try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e3) {
-				e3.printStackTrace();
-			}*/
-			//System.out.println("About to write object");
-			outToServer.writeObject(name);
-			//System.out.println("Wrote object");
-			
-			boolean running = true;
-			GameEvent e;
-			while (running) {
-				e = (GameEvent) inFromServer.readObject();
-				if (e.makeString().equals("YourTurn")) {
-					// Your turn
-					boolean validInput = false;
-					System.out.println("\nIt's your turn!");
-					System.out.println("Top card is: " + gs.topCard.makeString());
-					System.out.println("Your hand:");
-					System.out.print(gs.hand.printHand());
-					
-					do {
-						//System.out.println("");
-						System.out.print("Select card to play, or 'p' to pick up a card: ");
-						String in = serverConsoleInput.readLine();
-						System.out.println(" ");
-						if (in.toLowerCase().equals("p")) {
-							outToServer.writeObject(new DrawCard());
-							validInput = true;
-						} else {
-							try {
-								int number = Integer.valueOf(in).intValue();
-								Card c = gs.hand.cards.get(number-1);
-								
-								if (!c.canPlaceOn(gs.topCard)) {
-									System.out.println("You can't place that card!");
-									validInput = false;									
-								} else {
-									if (c.canSetColor()) {
-										boolean validColorInput = false;
-										do {
-											try {
-												System.out.println("Select new color:");
-												int color = 1;
-												for (Color col : allColors) {
-													System.out.println(color + ": " + col.name);
-													color++;
-												}
-												System.out.print("Your selection: ");
-												String colorIn = serverConsoleInput.readLine();
-												int colorInNum = Integer.valueOf(colorIn).intValue();
-												System.out.println(" ");
-												if (colorInNum > 0 && colorInNum < 5) {
-													// We indicate the user's chosen color
-													// to the server by setting the "color"
-													// of the Wild card.
-													c.color = allColors[colorInNum - 1];
-													validColorInput = true;
-												} else {
+		String name = "";
+		boolean clientRunning = true;
+		while (clientRunning) {
+			try {
+				BufferedReader serverConsoleInput = new BufferedReader(new InputStreamReader(System.in));
+				if (name.equals(""))
+					System.out.print("Your name: ");
+				else
+					System.out.print("Your name (hit enter to use \"" + name + "\"): ");
+				String tmpName = serverConsoleInput.readLine();
+				if (tmpName.equals("")) {
+					if (name.equals("")) {
+						System.err.println("You did not enter a name!");
+						System.exit(-1);
+					} // Else leave name unchanged
+				} else {
+					name = tmpName;
+				}
+				
+				Socket s = new Socket("localhost", 22278);
+				
+				gs = new GameStateClient ();
+				ObjectOutputStream outToServer = new ObjectOutputStream(s.getOutputStream());
+				ObjectInputStream inFromServer = new ObjectInputStream(s.getInputStream());
+				
+				outToServer.writeObject(name);
+				
+				GameEvent e;
+				boolean gameActive = true;
+				while (gameActive) {
+					e = (GameEvent) inFromServer.readObject();
+					if (e.makeString().equals("YourTurn")) {
+						// Your turn
+						boolean validInput = false;
+						System.out.println("\nIt's your turn!");
+						System.out.println("Top card is: " + gs.topCard.makeString());
+						System.out.println("Your hand:");
+						System.out.print(gs.hand.printHand());
+						
+						do {
+							System.out.print("Select card to play, or 'p' to pick up a card: ");
+							String in = serverConsoleInput.readLine();
+							System.out.println(" ");
+							if (in.toLowerCase().equals("p")) {
+								outToServer.writeObject(new DrawCard());
+								validInput = true;
+							} else {
+								try {
+									int number = Integer.valueOf(in).intValue();
+									Card c = gs.hand.cards.get(number-1);
+									
+									if (!c.canPlaceOn(gs.topCard)) {
+										System.out.println("You can't place that card!");
+										validInput = false;									
+									} else {
+										if (c.canSetColor()) {
+											boolean validColorInput = false;
+											do {
+												try {
+													System.out.println("Select new color:");
+													int color = 1;
+													for (Color col : allColors) {
+														System.out.println(color + ": " + col.name);
+														color++;
+													}
+													System.out.print("Your selection: ");
+													String colorIn = serverConsoleInput.readLine();
+													int colorInNum = Integer.valueOf(colorIn).intValue();
+													System.out.println(" ");
+													if (colorInNum > 0 && colorInNum < 5) {
+														// We indicate the user's chosen color
+														// to the server by setting the "color"
+														// of the Wild card.
+														c.color = allColors[colorInNum - 1];
+														validColorInput = true;
+													} else {
+														validColorInput = false;
+													}
+												} catch (NumberFormatException e1) {
 													validColorInput = false;
 												}
-											} catch (NumberFormatException e1) {
-												validColorInput = false;
-											}
-										} while (!validColorInput);
+											} while (!validColorInput);
+										}
+										outToServer.writeObject(new PlaceCard(c));
+										validInput = true;
 									}
-									//System.out.println(c.makeString());
-									
-									outToServer.writeObject(new PlaceCard(c));
-									validInput = true;
+								} catch (NumberFormatException e1) {
+									validInput = false;
+								} catch (IndexOutOfBoundsException e2) {
+									validInput = false;
 								}
-							} catch (NumberFormatException e1) {
-								validInput = false;
-							} catch (IndexOutOfBoundsException e2) {
-								validInput = false;
 							}
-						}
-					} while (!validInput);
-				} else {
-					e.doEventClient(gs);
-					System.out.println(e.makeString());
+						} while (!validInput);
+					} else {
+						e.doEventClient(gs);
+						System.out.println(e.makeString());
+					}
+					if (gs.gameEnded)
+						gameActive = false;
 				}
-				if (gs.gameEnded)
-					running = false;
+				s.close();
+				
+				boolean validPlayAgainInput = false;
+				do {
+					System.out.print("Play again? [y/n]: ");
+					String ynInput = serverConsoleInput.readLine();
+					System.out.println(" ");
+					if (ynInput.toLowerCase().equals("y")) {
+						validPlayAgainInput = true;
+					} else if (ynInput.toLowerCase().equals("n")) {
+						clientRunning = false;
+						validPlayAgainInput = true;
+					} else {
+						validPlayAgainInput = false;
+					}
+				} while (!validPlayAgainInput);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
 			}
-			s.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
 		}
 	}
 }

@@ -33,7 +33,7 @@ public class GameStateServer {
 	public boolean playDirection;
 	public Queue<GameEvent> eventBuffer;
 	public int nextFinishPosition;
-	public boolean skipNextPlayer = false;
+	public boolean skipNextPlayer;
 	
 	public void setNumPlayers(int numPlayers) {
 		totalPlayers = numPlayers;
@@ -54,6 +54,7 @@ public class GameStateServer {
 			System.exit(-1);
 		}
 		try {
+			playerSockets[i] = newSocket;
 			playerInputs[i] = new ObjectInputStream(newSocket.getInputStream());
 			playerOutputs[i] = new ObjectOutputStream(newSocket.getOutputStream());
 			String name = (String) playerInputs[i].readObject();
@@ -139,6 +140,8 @@ public class GameStateServer {
 		currentPlayer = player[currentPlayerId];		
 		allColors = new Color[]{Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
 		nextFinishPosition = 1;
+		skipNextPlayer = false;
+		playDirection = false;
 		
 		// Create deck
 		/*

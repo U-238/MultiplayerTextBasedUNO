@@ -64,66 +64,72 @@ public class UnoServer {
 		gs = new GameStateServer ();
 		events = new GameEventHandler(gs);
 		
-		gs.setNumPlayers(numPlayers);
-		
-		try {
-			// Accept connections from players
-			int playersJoined = 0;
-			while (playersJoined < numPlayers) {
-				//System.out.println("Waiting for connection");
-				Socket newSocket = serverSocket.accept();
-				//System.out.println("Got connection");
-				gs.newPlayer(newSocket);
-				playersJoined++;
-			}
-			System.out.println("All players joined");
-			
-			// Set up game
-			gs.prepareForGameStart();
-			events.handleEvent(new FirstCard(gs.topCard));
-			for (Player p : gs.player) {
-				events.handleEvent(new DrawCard(p, 7));
-			}
-			
-			// Start game
-			boolean running = true;
-			GameEvent e;
-			while (running) {
-				gs.currentPlayerOutputStream().writeObject(new YourTurn());
-				e = (GameEvent) gs.currentPlayerInputStream().readObject();
-				events.handleEventFromPlayer(e, gs.currentPlayer);
-				GameEvent e2;
-				while (!gs.eventBuffer.isEmpty()) {
-					e2 = gs.eventBuffer.poll();
-					events.handleEvent(e2);
+		boolean serverRunning = true;
+		while (serverRunning) {
+			try {
+				// Accept connections from players
+				gs.setNumPlayers(numPlayers);
+				System.out.println("Waiting for connections...");
+				int playersJoined = 0;
+				while (playersJoined < numPlayers) {
+					Socket newSocket = serverSocket.accept();
+					//System.out.println("Got connection");
+					gs.newPlayer(newSocket);
+					playersJoined++;
 				}
-				if (gs.activePlayers() == 1) {
-					events.handleEvent(new GameEnd());
-					running = false;
-				} else {
-					if (gs.deck.size() < 5) {
-						events.handleEvent(new ReplenishDeck());
+				System.out.println("All players joined");
+				
+				// Set up game
+				gs.prepareForGameStart();
+				events.handleEvent(new FirstCard(gs.topCard));
+				for (Player p : gs.player) {
+					events.handleEvent(new DrawCard(p, 7));
+				}
+				
+				// Start game
+				boolean gameActive = true;
+				GameEvent e;
+				while (gameActive) {
+					gs.currentPlayerOutputStream().writeObject(new YourTurn());
+					e = (GameEvent) gs.currentPlayerInputStream().readObject();
+					events.handleEventFromPlayer(e, gs.currentPlayer);
+					GameEvent e2;
+					while (!gs.eventBuffer.isEmpty()) {
+						e2 = gs.eventBuffer.poll();
+						events.handleEvent(e2);
 					}
-					gs.moveToNextPlayer();
+					if (gs.activePlayers() == 1) {
+						events.handleEvent(new GameEnd());
+						gameActive = false;
+					} else {
+						if (gs.deck.size() < 5) {
+							events.handleEvent(new ReplenishDeck());
+						}
+						gs.moveToNextPlayer();
+					}
 				}
+				
+				for (ObjectOutputStream s : gs.playerOutputs) {
+					s.close();
+				}
+				for (ObjectInputStream s : gs.playerInputs) {
+					s.close();
+				}
+				for (Socket s : gs.playerSockets) {
+					if (s != null) s.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
 			}
-			
-			for (ObjectOutputStream s : gs.playerOutputs) {
-				s.close();
-			}
-			for (ObjectInputStream s : gs.playerInputs) {
-				s.close();
-			}
-			for (Socket s : gs.playerSockets) {
-				if (s != null) s.close();
-			}
+		}
+		// TODO: safe shutdown using shutdown hook
+		try {
 			serverSocket.close();
-			
-			System.out.println("Server has shut down");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
 		}
+		System.out.println("Server has shut down");
 	}
 }

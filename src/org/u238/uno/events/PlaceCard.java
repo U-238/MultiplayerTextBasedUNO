@@ -45,7 +45,9 @@ public class PlaceCard extends GameEvent {
 		gs.topCard = cardPlayed;
 		cardPlayed.doCardAction(gs);
 		
-		if (player.hand.cards.size() == 0) {
+		if (player.hand.cards.size() == 1) {
+			gs.eventBuffer.add(new ShoutUno(player));
+		} else if (player.hand.cards.size() == 0) {
 			gs.eventBuffer.add(new PlayerFinished(player));
 		}
 	}

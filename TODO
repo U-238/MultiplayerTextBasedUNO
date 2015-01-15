@@ -1,0 +1,11 @@
+TODO
+
+Fix Wild cards when one is drawn and immediately put down
+Implement Wild Draw Four restriction
+Scoring
+Tally of games won
+Play against AI
+Implement server-side restriction on whch card can be placed
+Text colours
+Client should take server address from command line (with localhost as default)
+Can specify number of players on server command line

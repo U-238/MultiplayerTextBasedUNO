@@ -140,7 +140,7 @@ public class GameStateServer {
 		eventBuffer = new LinkedList<GameEvent>();
 		currentPlayerId = 0;
 		currentPlayer = player[currentPlayerId];		
-		allColors = new Color[]{Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
+		allColors = new Color[]{Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW};
 		nextFinishPosition = 1;
 		skipNextPlayer = false;
 		playDirection = false;

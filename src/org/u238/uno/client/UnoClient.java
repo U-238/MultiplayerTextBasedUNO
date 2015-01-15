@@ -17,7 +17,7 @@ import org.u238.uno.events.YourTurnAfterDraw;
 import org.u238.uno.state.GameStateClient;
 
 public class UnoClient {
-	Color[] allColors = new Color[]{Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN};
+	Color[] allColors = new Color[]{Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW};
 	GameStateClient gs;
 	boolean sortingEnabled = false;
 

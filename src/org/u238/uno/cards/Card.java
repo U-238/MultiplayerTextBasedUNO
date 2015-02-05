@@ -40,7 +40,6 @@ public abstract class Card implements Serializable, Comparable<Card> {
 		return (c.uniqueId == this.uniqueId);
 	}
 	
-	@Override
 	public int compareTo(Card o) {
 		if (this.equals(o))
 			return 0;

@@ -106,7 +106,7 @@ public class UnoClient {
 									
 									if (!c.canPlaceOn(gs.topCard)) {
 										System.out.println("You can't place that card!");
-										validInput = false;									
+										validInput = false;
 									} else {
 										if (c.canSetColor()) {
 											boolean validColorInput = false;

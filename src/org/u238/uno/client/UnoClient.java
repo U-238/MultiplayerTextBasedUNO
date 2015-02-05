@@ -22,11 +22,27 @@ public class UnoClient {
 	boolean sortingEnabled = false;
 
 	public static void main(String[] args) {
+		// Read server address from command-line input
+		String hostname = "localhost";
+		int port = 22278;
+		if (args.length > 0) {
+			hostname = args[0];
+		}
+		if (args.length > 1) {
+			int port_tmp = 0;
+			try {
+				port_tmp = Integer.parseInt(args[1]);
+			} catch (NumberFormatException e) {
+			}
+			if (port_tmp > 0 && port_tmp < 65536)
+				port = port_tmp;
+		}
+		
 		UnoClient c = new UnoClient();
-		c.run();
+		c.run(hostname, port);
 	}
 	
-	void run() {
+	void run(String hostname, int port) {
 		String name = "";
 		boolean clientRunning = true;
 		while (clientRunning) {
@@ -46,7 +62,7 @@ public class UnoClient {
 					name = tmpName;
 				}
 				
-				Socket s = new Socket("localhost", 22278);
+				Socket s = new Socket(hostname, port);
 				
 				gs = new GameStateClient ();
 				ObjectOutputStream outToServer = new ObjectOutputStream(s.getOutputStream());
@@ -148,7 +164,36 @@ public class UnoClient {
 							}
 						} while (!validTurnAfterDraw);
 						if (playCard) {
-							outToServer.writeObject(new PlaceCard(((YourTurnAfterDraw) e).card));
+							Card c = ((YourTurnAfterDraw) e).card;
+							if (c.canSetColor()) {
+								boolean validColorInput = false;
+								do {
+									try {
+										System.out.println("Select new color:");
+										int color = 1;
+										for (Color col : allColors) {
+											System.out.println(color + ": " + col.name);
+											color++;
+										}
+										System.out.print("Your selection: ");
+										String colorIn = serverConsoleInput.readLine();
+										int colorInNum = Integer.valueOf(colorIn).intValue();
+										System.out.println(" ");
+										if (colorInNum > 0 && colorInNum < 5) {
+											// We indicate the user's chosen color
+											// to the server by setting the "color"
+											// of the Wild card.
+											c.color = allColors[colorInNum - 1];
+											validColorInput = true;
+										} else {
+											validColorInput = false;
+										}
+									} catch (NumberFormatException e1) {
+										validColorInput = false;
+									}
+								} while (!validColorInput);
+							}
+							outToServer.writeObject(new PlaceCard(c));
 						} else {
 							outToServer.writeObject(new NullEvent());
 						}

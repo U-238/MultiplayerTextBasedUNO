@@ -7,6 +7,4 @@ The popular card game UNO, as a text-based Java game with up to 10 clients over 
 
 I threw this together really quickly. It's not particularly good, but it works.
 
-Want to play right away? Download the latest snapshot from http://uno.u-238.net
-
 To build from source: clone this repo and type "mvn package" in the root directory to build uno.jar
